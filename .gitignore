@@ -3,3 +3,6 @@ db
 incremental_db
 output_files
 *.bak
+*.bak1
+*.do
+*.rpt

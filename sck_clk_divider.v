@@ -3,16 +3,16 @@
 `endif
 
 module sck_clk_divider
+#(parameter tick_count = 1_000)
 (
     input clk,
     input rst_n,
     output sck,
     output sck_edge
 );
-    localparam tick_count = 4;
 
     localparam DOWN_SIZE = tick_count;
-    localparam UP_SIZE = tick_count - 1;
+    localparam UP_SIZE = tick_count;
 
     localparam  S_DOWN = 2'd0,
                 S_EDGE = 2'd1,
