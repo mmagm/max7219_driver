@@ -1,0 +1,50 @@
+module shift_col1
+(
+   input clk,
+   input rst_n,
+   input en,
+   input dir,
+   input [7:0] d,
+   output [63:0] out
+);
+
+    reg [63:0] pixels;
+    reg [63:0] next_out;
+
+    always @(posedge clk)
+        if (!rst_n)
+            pixels <= 0;
+        else begin
+            if (en)
+                pixels <= next_out;
+            else
+                pixels <= pixels;
+        end
+
+    always @* begin
+        case (dir)
+            0: begin
+                next_out = {{pixels[62:56], d[7]},
+                            {pixels[54:48], d[6]},
+                            {pixels[46:40], d[5]},
+                            {pixels[38:32], d[4]},
+                            {pixels[30:24], d[3]},
+                            {pixels[22:16], d[2]},
+                            {pixels[14:8],  d[1]},
+                            {pixels[6:0],   d[0]}};
+            end
+            1: begin
+                next_out = {{d[7], pixels[63:57]},
+                            {d[6], pixels[55:49]},
+                            {d[5], pixels[47:41]},
+                            {d[4], pixels[39:33]},
+                            {d[3], pixels[31:25]},
+                            {d[2], pixels[23:17]},
+                            {d[1], pixels[15:9]},
+                            {d[0], pixels[7:1]}};
+            end
+        endcase
+    end
+
+    assign out = pixels;
+endmodule

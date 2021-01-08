@@ -6,3 +6,5 @@ output_files
 *.bak1
 *.do
 *.rpt
+.qsys_edit/*.xml
+.qsys_edit/*.xml

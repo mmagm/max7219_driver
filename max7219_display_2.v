@@ -183,80 +183,48 @@ module max7219_display_2(
             S_DISPLAY_DIGIT0: begin
                 address = {digit0, digit0};
                 data = {pixels[127:120], pixels[63:56]};
-                // data = {{pixels[127], pixels[119], pixels[111], pixels[103], pixels[95], pixels[87], pixels[79], pixels[71]},
-                //         {pixels[63], pixels[55], pixels[47], pixels[39], pixels[31], pixels[23], pixels[15], pixels[7]}};
-                // data = {{pixels[71], pixels[79], pixels[87], pixels[95], pixels[103], pixels[111], pixels[119], pixels[127]},
-                //         {pixels[15], pixels[7], pixels[23], pixels[31], pixels[39], pixels[47], pixels[55], pixels[63]}};
                 if (finished)
                     nextState = S_DISPLAY_DIGIT1;
             end
             S_DISPLAY_DIGIT1: begin
                 address = {digit1, digit1};
                 data = {pixels[119:112], pixels[55:48]};
-                // data = {{pixels[126], pixels[118], pixels[110], pixels[102], pixels[94], pixels[86], pixels[78], pixels[70]},
-                //         {pixels[62], pixels[54], pixels[46], pixels[38], pixels[30], pixels[22], pixels[14], pixels[6]}};
-                // data = {{pixels[70], pixels[78], pixels[86], pixels[94], pixels[102], pixels[110], pixels[118], pixels[126]},
-                //         {pixels[6], pixels[14], pixels[22], pixels[30], pixels[38], pixels[46], pixels[54], pixels[62]}};
                 if (finished)
                     nextState = S_DISPLAY_DIGIT2;
             end
             S_DISPLAY_DIGIT2: begin
                 address = {digit2, digit2};
                 data = {pixels[111:104], pixels[47:40]};
-                // data = {{pixels[125], pixels[117], pixels[109], pixels[101], pixels[93], pixels[85], pixels[77], pixels[69]}, 
-                //         {pixels[61], pixels[53], pixels[45], pixels[37], pixels[29], pixels[21], pixels[13], pixels[5]}};
-                // data = {{pixels[69], pixels[77], pixels[85], pixels[93], pixels[101], pixels[109], pixels[117], pixels[125]}, 
-                //         {pixels[5], pixels[13], pixels[21], pixels[29], pixels[37], pixels[45], pixels[53], pixels[61]}};
                 if (finished)
                     nextState = S_DISPLAY_DIGIT3;
             end
             S_DISPLAY_DIGIT3: begin
                 address = {digit3, digit3};
                 data = {pixels[103:96], pixels[39:32]};
-                // data = {{pixels[124], pixels[116], pixels[108], pixels[100], pixels[92], pixels[84], pixels[76], pixels[68]},
-                //         {pixels[60], pixels[52], pixels[44], pixels[36], pixels[28], pixels[20], pixels[12], pixels[4]}};
-                // data = {{pixels[68], pixels[76], pixels[84], pixels[92], pixels[100], pixels[108], pixels[116], pixels[124]},
-                //         {pixels[4], pixels[12], pixels[20], pixels[28], pixels[36], pixels[42], pixels[50], pixels[60]}};
                 if (finished)
                     nextState = S_DISPLAY_DIGIT4;
             end
             S_DISPLAY_DIGIT4: begin
                 address = {digit4, digit4};
                 data = {pixels[95:88], pixels[31:24]};
-                // data = {{pixels[123], pixels[115], pixels[107], pixels[99], pixels[91], pixels[83], pixels[75], pixels[67]},
-                //         {pixels[59], pixels[51], pixels[43], pixels[35], pixels[27], pixels[19], pixels[11], pixels[3]}};
-                // data = {{pixels[67], pixels[75], pixels[83], pixels[91], pixels[99], pixels[107], pixels[115], pixels[123]},
-                //         {pixels[3], pixels[11], pixels[19], pixels[27], pixels[35], pixels[43], pixels[51], pixels[59]}};
                 if (finished)
                     nextState = S_DISPLAY_DIGIT5;
             end
             S_DISPLAY_DIGIT5: begin
                 address = {digit5, digit5};
                 data = {pixels[87:80], pixels[23:16]};
-                // data = {{pixels[122], pixels[114], pixels[106], pixels[98], pixels[90], pixels[82], pixels[74], pixels[66]},
-                //         {pixels[58], pixels[50], pixels[42], pixels[34], pixels[26], pixels[18], pixels[10], pixels[2]}};
-                // data = {{pixels[66], pixels[75], pixels[82], pixels[90], pixels[98], pixels[106], pixels[114], pixels[122]},
-                //         {pixels[2], pixels[10], pixels[18], pixels[26], pixels[34], pixels[42], pixels[50], pixels[58]}};
                 if (finished)
                     nextState = S_DISPLAY_DIGIT6;
             end
             S_DISPLAY_DIGIT6: begin
                 address = {digit6, digit6};
                 data = {pixels[79:72], pixels[15:8]};
-                // data = {{pixels[121], pixels[113], pixels[105], pixels[97], pixels[89], pixels[81], pixels[73], pixels[65]},
-                //         {pixels[57], pixels[49], pixels[41], pixels[33], pixels[25], pixels[17], pixels[9], pixels[1]}};
-                // data = {{pixels[65], pixels[73], pixels[81], pixels[89], pixels[97], pixels[105], pixels[113], pixels[121]},
-                //         {pixels[1], pixels[9], pixels[17], pixels[25], pixels[33], pixels[41], pixels[49], pixels[57]}};
                 if (finished)
                     nextState = S_DISPLAY_DIGIT7;
             end
             S_DISPLAY_DIGIT7: begin
                 address = {digit7, digit7};
                 data = {pixels[71:64], pixels[7:0]};
-                // data = {{pixels[120], pixels[112], pixels[104], pixels[96], pixels[88], pixels[80], pixels[72], pixels[64]},
-                //         {pixels[56], pixels[48], pixels[40], pixels[32], pixels[24], pixels[16], pixels[8], pixels[0]}};
-                // data = {{pixels[64], pixels[72], pixels[80], pixels[88], pixels[96], pixels[104], pixels[112], pixels[120]},
-                //         {pixels[0], pixels[8], pixels[16], pixels[24], pixels[32], pixels[40], pixels[48], pixels[56]}};
                 if (finished)
                     nextState = S_NOOP_DISPLAY;
             end
