@@ -5,72 +5,52 @@ module top2(
     output dout,
     output cs
 );
-    // reg [127:0] pixels = {8'h18, 8'h18, 8'h18, 8'hff, 8'hff, 8'h18, 8'h18, 8'h18,8'h18, 8'h18, 8'h18, 8'hff, 8'hff, 8'h18, 8'h18, 8'h18};
-    // reg [127:0] pixels = {64'h3c66663e06663c00,64'h3c66663e06663c00};
-    // reg [127:0] pixels = {64'h1c36363030307800, 64'h603c766666663c00};
-    // reg [127:0] pixels = {64'h1c36363030307800, 64'h0};
-	// reg [127:0] pixels = 128'h0;
-
     wire clk_shift;
-    wire [7:0] data;
-    wire [127:0] shifted;
+
+    wire [7:0] col, ex;
+    wire [63:0] pixels1;
+    wire [63:0] pixels2;
 
     sck_clk_divider #(5_000_000) sck_clk_divider_inst
     (
         .clk(clk),
         .rst_n(rst_n),
-        .sck(clk_shift),
-        .sck_edge()
+        .sck(clk_shift)
     );
 
-	wire [63:0] symbol;
-    reg [5:0] address;
-	reg [3:0] cnt;
-
-    rom rom_inst(
-        .clock(clk_shift),
-        .address(address),
-        .q(symbol)
-    );
-
-    always @(posedge clk_shift or negedge rst_n)
-	    if (~rst_n)
-		    cnt <= 0;
-		else
-		    cnt <= cnt + 1'b1;
-
-	always @(posedge clk_shift or negedge rst_n)
-	    if (~rst_n)
-	        address <= 0;
-		else if (cnt == 4'hf)
-		    address <= address + 1'b1;
-
-	wire [127:0] pixels = {symbol, symbol};
-
-    cycle_col cycle_col_inst
+    provider provider_1_inst
     (
         .clk(clk_shift),
         .rst_n(rst_n),
-        .dir(1'b0),
-        .pixels(pixels),
-        .q(data)
+        .col(col)
     );
 
-    shift_col shift_col_inst
-    (
+    shift_col1 shift_col1_inst(
         .clk(clk_shift),
         .rst_n(rst_n),
         .en(1'b1),
-        .dir(1'b0),
-        .d(data),
-        .out(shifted)
+        .dir(1'b1),
+        .d(col),
+        .ex(ex),
+        .out(pixels1)
     );
+
+    shift_col1 shift_col2_inst(
+        .clk(clk_shift),
+        .rst_n(rst_n),
+        .en(1'b1),
+        .dir(1'b1),
+        .d(ex),
+        .out(pixels2)
+    );
+
+    wire [127:0] pixels = {pixels1, pixels2};
 
     max7219_display_2 max7219_display_2_inst
     (
         .clk(clk),
         .rst_n(rst_n),
-        .pixels(shifted),
+        .pixels(pixels),
         .sck(sck),
         .mosi(dout),
         .cs(cs),

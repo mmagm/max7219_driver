@@ -6,10 +6,6 @@ module top(
     output dout,
     output cs
 );
-
-    // reg [63:0] pixels = {8'h18, 8'h18, 8'h18, 8'hff, 8'hff, 8'h18, 8'h18, 8'h18};
-	// reg [63:0] pixels = 64'he5a2e50000a207a2;
-
     wire [7:0] col;
     wire [63:0] pixels;
     wire clk_shift;

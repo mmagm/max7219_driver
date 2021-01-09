@@ -5,6 +5,7 @@ module shift_col1
    input en,
    input dir,
    input [7:0] d,
+   output reg [7:0] ex,
    output [63:0] out
 );
 
@@ -32,6 +33,7 @@ module shift_col1
                             {pixels[22:16], d[2]},
                             {pixels[14:8],  d[1]},
                             {pixels[6:0],   d[0]}};
+                ex = {pixels[63], pixels[55], pixels[47], pixels[39], pixels[31], pixels[23], pixels[15], pixels[7]};
             end
             1: begin
                 next_out = {{d[7], pixels[63:57]},
@@ -42,6 +44,7 @@ module shift_col1
                             {d[2], pixels[23:17]},
                             {d[1], pixels[15:9]},
                             {d[0], pixels[7:1]}};
+                ex = {pixels[56], pixels[48], pixels[40], pixels[32], pixels[24], pixels[16], pixels[8], pixels[0]};
             end
         endcase
     end
