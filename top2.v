@@ -18,14 +18,14 @@ module top2(
         .sck(clk_shift)
     );
 
-    provider provider_1_inst
+    provider provider_inst
     (
         .clk(clk_shift),
         .rst_n(rst_n),
         .col(col)
     );
 
-    shift_col1 shift_col1_inst(
+    shift_col shift_col1_inst(
         .clk(clk_shift),
         .rst_n(rst_n),
         .en(1'b1),
@@ -35,7 +35,7 @@ module top2(
         .out(pixels1)
     );
 
-    shift_col1 shift_col2_inst(
+    shift_col shift_col2_inst(
         .clk(clk_shift),
         .rst_n(rst_n),
         .en(1'b1),

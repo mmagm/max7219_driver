@@ -19,7 +19,7 @@ module provider(
                 address <= address + 1'b1; 
         end
 
-    font_rom #(.LENGTH(64), .WIDTH(64)) font_rom_inst
+    rom #(.LENGTH(64), .WIDTH(64)) rom_inst
     (
         .clk(clk),
         .addr(address),

@@ -1,4 +1,4 @@
-module font_rom
+module rom
 #(parameter LENGTH = 8, parameter WIDTH = 32)
 (
   input [WIDTH - 1:0]      addr,
