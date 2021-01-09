@@ -72,6 +72,7 @@ set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name VERILOG_FILE rom.v
 set_global_assignment -name SDC_FILE ledmatrix.sdc
 set_global_assignment -name VERILOG_FILE register.v
 set_global_assignment -name VERILOG_FILE top2.v
@@ -80,7 +81,6 @@ set_global_assignment -name VERILOG_FILE spi_master.v
 set_global_assignment -name VERILOG_FILE spi_master_2.v
 set_global_assignment -name VERILOG_FILE register_we.v
 set_global_assignment -name VERILOG_FILE max7219_display.v
-set_global_assignment -name VERILOG_FILE font.v
 set_global_assignment -name VERILOG_FILE provider.v
 set_global_assignment -name VERILOG_FILE top.v
 set_global_assignment -name VERILOG_FILE shift_col.v

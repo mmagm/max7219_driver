@@ -3,23 +3,97 @@ module provider(
     input rst_n,
     output reg [7:0] col
 );
-    reg [5:0] address;
+    // FPGA-Systems.ru (15 symbols)
+    // (0..9) - 1..9,0
+    // (A..z) - 10..62
+    // (A..Z) - 10..35
+    // (a..z) - 37..62
+    // . - 80
+    // - - 65
+
+    // A B C D E F G H I J K L M
+    // N O P Q R S T U V W X Y Z
+
+    // a b c d e f g h i j k l m
+    // n o p q r s t u v w x y z
+
+    // 15
+    // 25
+    // 16
+    // 10
+    // 65
+    // 28
+    // 61
+    // 55
+    // 56
+    // 41
+    // 49
+    // 55
+    // 80
+    // 54
+    // 57
+
+    reg [7:0] address, next_address;
     reg [2:0] row_cnt;
 
+    localparam  S0 = 4'd0,
+                S1 = 4'd1,
+                S2 = 4'd2,
+                S3 = 4'd3,
+                S4 = 4'd4,
+                S5 = 4'd5,
+                S6 = 4'd6,
+                S7 = 4'd7,
+                S8 = 4'd8,
+                S9 = 4'd9,
+                S10 = 4'd10,
+                S11 = 4'd11,
+                S12 = 4'd12,
+                S13 = 4'd13,
+                S14 = 4'd14,
+                S15 = 4'd15;
+
+    reg [3:0] state, next_state;
+
     wire [63:0] pixels;
- 
+
     always @(posedge clk or negedge rst_n)
         if (~rst_n) begin
-            address <= 0;
+            address <= 127;
             row_cnt <= 0;
+            state <= S0;
         end
         else begin
             row_cnt <= row_cnt + 1'b1;
-            if (row_cnt == 3'b111)
-                address <= address + 1'b1; 
+            if (row_cnt == 3'b111) begin
+                address <= next_address; // address + 1'b1;
+                state <= next_state;
+            end
         end
 
-    rom #(.LENGTH(64), .WIDTH(64)) rom_inst
+    always @* begin
+        next_state = state;
+        case(state)
+            S0: begin next_state = S1; next_address = 127; end
+            S1: begin next_state = S2; next_address = 15; end
+            S2: begin next_state = S3; next_address = 25; end
+            S3: begin next_state = S4; next_address = 16; end
+            S4: begin next_state = S5; next_address = 10; end
+            S5: begin next_state = S6; next_address = 65; end
+            S6: begin next_state = S7; next_address = 28; end
+            S7: begin next_state = S8; next_address = 61; end
+            S8: begin next_state = S9; next_address = 55; end
+            S9: begin next_state = S10; next_address = 56; end
+            S10: begin next_state = S11; next_address = 41; end
+            S11: begin next_state = S12; next_address = 49; end
+            S12: begin next_state = S13; next_address = 55; end
+            S13: begin next_state = S14; next_address = 80; end
+            S14: begin next_state = S15; next_address = 54; end
+            S15: begin next_state = S0; next_address = 57; end
+        endcase
+    end
+
+    rom #(.LENGTH(128), .WIDTH(64)) rom_inst
     (
         .clk(clk),
         .addr(address),
