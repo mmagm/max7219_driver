@@ -1,6 +1,7 @@
 module provider(
     input clk,
     input rst_n,
+    input enable,
     output reg [7:0] col
 );
     // FPGA-Systems.ru (15 symbols)
@@ -63,7 +64,7 @@ module provider(
             row_cnt <= 0;
             state <= S0;
         end
-        else begin
+        else if (enable) begin
             row_cnt <= row_cnt + 1'b1;
             if (row_cnt == 3'b111) begin
                 address <= next_address; // address + 1'b1;

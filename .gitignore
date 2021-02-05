@@ -2,9 +2,12 @@ build
 db
 incremental_db
 output_files
+*.out
+*.out1
 *.bak
 *.bak1
 *.do
 *.rpt
+*.qws
 .qsys_edit/*.xml
 .qsys_edit/*.xml

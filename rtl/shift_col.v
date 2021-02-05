@@ -15,12 +15,8 @@ module shift_col
     always @(posedge clk)
         if (!rst_n)
             pixels <= 0;
-        else begin
-            if (en)
-                pixels <= next_out;
-            else
-                pixels <= pixels;
-        end
+        else if (en)
+            pixels <= next_out;
 
     always @* begin
         case (dir)

@@ -1,19 +1,21 @@
-`ifdef ICARUS
-    `include "spi_master.v"
-    `include "sck_clk_divider.v"
-`endif
+// `include "sck_clk_divider.v"
+// `include "max7219_spi.v"
 
-module max7219_display(
+module max7219_display
+#(
+    parameter SIZE = 2
+)
+(
     input clk,
     input rst_n,
-    input [63:0] pixels,
-    output sck,
-    output mosi,
-    output cs,
-    output finish
+    input enable,
+    input [64 * SIZE - 1:0] pixels,
+    output wire started,
+    output wire mosi,
+    output wire cs
 );
-
     localparam  noop        = 8'h00,
+
                 digit0      = 8'h01,
                 digit1      = 8'h02,
                 digit2      = 8'h03,
@@ -22,34 +24,27 @@ module max7219_display(
                 digit5      = 8'h06,
                 digit6      = 8'h07,
                 digit7      = 8'h08,
+
                 decodeMode  = 8'h09,
                 intensity   = 8'h0A,
                 scanLimit   = 8'h0B,
                 shutdown    = 8'h0C,
                 displayTest = 8'h0F;
 
-    reg [7:0] address;
-    reg [7:0] data;
+    reg [8*SIZE-1:0] address;
+    reg [8*SIZE-1:0] data;
     wire finished;
 
-    sck_clk_divider sck_clk_divider_inst
+    max7219_spi #(.SIZE(SIZE)) max7219_spi_inst
     (
         .clk(clk),
         .rst_n(rst_n),
-        .sck(sck),
-        .sck_edge()
-    );
-
-
-    spi_master spi_master_inst
-    (
-        .sck(sck),
-        .rst_n(rst_n),
+        .start(enable),
         .address(address),
         .data(data),
         .mosi(mosi),
         .cs(cs),
-        .finish(finished)
+        .finished(finished)
     );
 
     reg [5:0] state, nextState;
@@ -82,160 +77,213 @@ module max7219_display(
 
                 S_NOOP_DISPLAY = 6'd22;
 
-    always @(posedge sck or negedge rst_n)
+    always @(posedge clk or negedge rst_n)
         if (~rst_n)
             state <= S_SCAN_LIMIT;
         else
             state <= nextState;
 
+    integer i;
     always @* begin
         nextState = state;
+        i = 0;
 
         case (state)
             S_SCAN_LIMIT: begin
-                address = scanLimit;
-                data = 8'h07;
+                address = {SIZE{scanLimit}};
+                data = {SIZE{8'h07}};
                 if (finished)
                     nextState = S_DECODE_MODE;
             end
             S_DECODE_MODE: begin
-                address = decodeMode;
-                data = 8'h00;
+                address = {SIZE{decodeMode}};
+                data = {SIZE{8'h00}};
                 if (finished)
                     nextState = S_SHUTDOWN;
             end
             S_SHUTDOWN: begin
-                address = shutdown;
-                data = 8'h01;
+                address = {SIZE{shutdown}};
+                data = {SIZE{8'h01}};
                 if (finished)
                     nextState = S_DISPLAY_TEST;
             end
             S_DISPLAY_TEST: begin
-                address = displayTest;
-                data = 8'h00;
+                address = {SIZE{displayTest}};
+                data = {SIZE{8'h00}};
                 if (finished)
                     nextState = S_INTENSITY;
             end
             S_INTENSITY: begin
-                address = intensity;
-                data = 8'h0f;
+                address = {SIZE{intensity}};
+                data = {SIZE{8'h02}};
                 if (finished)
                     nextState = S_RESET_DIGIT0;
             end
 
             S_RESET_DIGIT0: begin
-                address = digit0;
-                data = 8'h00;
+                address = {SIZE{digit0}};
+                data = {SIZE{8'h00}};
                 if (finished)
                     nextState = S_RESET_DIGIT1;
             end
             S_RESET_DIGIT1: begin
-                address = digit1;
-                data = 8'h00;
+                address = {SIZE{digit1}};
+                data = {SIZE{8'h00}};
                 if (finished)
                     nextState = S_RESET_DIGIT2;
             end
             S_RESET_DIGIT2: begin
-                address = digit2;
-                data = 8'h00;
+                address = {SIZE{digit2}};
+                data = {SIZE{8'h00}};
                 if (finished)
                     nextState = S_RESET_DIGIT3;
             end
             S_RESET_DIGIT3: begin
-                address = digit3;
-                data = 8'h00;
+                address = {SIZE{digit3}};
+                data = {SIZE{8'h00}};
                 if (finished)
                     nextState = S_RESET_DIGIT4;
             end
             S_RESET_DIGIT4: begin
-                address = digit4;
-                data = 8'h00;
+                address = {SIZE{digit4}};
+                data = {SIZE{8'h00}};
                 if (finished)
                     nextState = S_RESET_DIGIT5;
             end
             S_RESET_DIGIT5: begin
-                address = digit5;
-                data = 8'h00;
+                address = {SIZE{digit5}};
+                data = {SIZE{8'h00}};
                 if (finished)
                     nextState = S_RESET_DIGIT6;
             end
             S_RESET_DIGIT6: begin
-                address = digit6;
-                data = 8'h00;
+                address = {SIZE{digit6}};
+                data = {SIZE{8'h00}};
                 if (finished)
                     nextState = S_RESET_DIGIT7;
             end
             S_RESET_DIGIT7: begin
-                address = digit7;
-                data = 8'h00;
+                address = {SIZE{digit7}};
+                data = {SIZE{8'h00}};
                 if (finished)
                     nextState = S_NOOP_RESET;
             end
 
             S_NOOP_RESET: begin
-                address = noop;
-                data = 8'h00;
+                address = {SIZE{noop}};
+                data = {SIZE{8'h00}};
                 if (finished)
                     nextState = S_DISPLAY_DIGIT0;
             end
 
             S_DISPLAY_DIGIT0: begin
-                address = digit0;
-                data = pixels[63:56];
+                address = {SIZE{digit0}};
+
+                // SIZE = 2
+
+                // i = 0
+                // data[8 * 1 - 1 -: 8] = data[7:0]
+                // pixels[64 * 0 + 64 - 1 -: 8] = pixels[63:56]
+
+                // i = 1
+                // data[8 * 2 - 1 -: 8] = data[15:8]
+                // pixels[64*1 + 64 - 1 -: 8] = pixels[127:120]
+
+                for (i = 0; i < SIZE; i = i + 1) begin
+                    data[8 * (i + 1) - 1 -: 8] = pixels[64 * i + 64 - 1 -: 8];
+                end
+
                 if (finished)
                     nextState = S_DISPLAY_DIGIT1;
             end
             S_DISPLAY_DIGIT1: begin
-                address = digit1;
-                data = pixels[55:48];
+                address = {SIZE{digit1}};
+
+                for (i = 0; i < SIZE; i = i + 1) begin
+                    data[8 * (i + 1) - 1 -: 8] = pixels[64 * i + 56 - 1 -: 8];
+                end
+
                 if (finished)
                     nextState = S_DISPLAY_DIGIT2;
             end
             S_DISPLAY_DIGIT2: begin
-                address = digit2;
-                data = pixels[47:40];
+                address = {SIZE{digit2}};
+
+                for (i = 0; i < SIZE; i = i + 1) begin
+                    data[8 * (i + 1) - 1 -: 8] = pixels[64 * i + 48 - 1 -: 8];
+                end
+
                 if (finished)
                     nextState = S_DISPLAY_DIGIT3;
             end
             S_DISPLAY_DIGIT3: begin
-                address = digit3;
-                data = pixels[39:32];
+                address = {SIZE{digit3}};
+
+                for (i = 0; i < SIZE; i = i + 1) begin
+                    data[8 * (i + 1) - 1 -: 8] = pixels[64 * i + 40 - 1 -: 8];
+                end
+
                 if (finished)
                     nextState = S_DISPLAY_DIGIT4;
             end
             S_DISPLAY_DIGIT4: begin
-                address = digit4;
-                data = pixels[31:24];
+                address = {SIZE{digit4}};
+
+                for (i = 0; i < SIZE; i = i + 1) begin
+                    data[8 * (i + 1) - 1 -: 8] = pixels[64 * i + 32 - 1 -: 8];
+                end
+
                 if (finished)
                     nextState = S_DISPLAY_DIGIT5;
             end
             S_DISPLAY_DIGIT5: begin
-                address = digit5;
-                data = pixels[23:16];
+                address = {SIZE{digit5}};
+
+                for (i = 0; i < SIZE; i = i + 1) begin
+                    data[8 * (i + 1) - 1 -: 8] = pixels[64 * i + 24 - 1 -: 8];
+                end
+
                 if (finished)
                     nextState = S_DISPLAY_DIGIT6;
             end
             S_DISPLAY_DIGIT6: begin
-                address = digit6;
-                data = pixels[15:8];
+                address = {SIZE{digit6}};
+
+                for (i = 0; i < SIZE; i = i + 1) begin
+                    data[8 * (i + 1) - 1 -: 8] = pixels[64 * i + 16 - 1 -: 8];
+                end
+
                 if (finished)
                     nextState = S_DISPLAY_DIGIT7;
             end
             S_DISPLAY_DIGIT7: begin
-                address = digit7;
-                data = pixels[7:0];
+                address = {SIZE{digit7}};
+
+                for (i = 0; i < SIZE; i = i + 1) begin
+                    data[8 * (i + 1) - 1 -: 8] = pixels[64 * i + 8 - 1 -: 8];
+                end
+
                 if (finished)
                     nextState = S_NOOP_DISPLAY;
             end
 
             S_NOOP_DISPLAY: begin
-                address = noop;
-                data = 8'h00;
+                address = {SIZE{noop}};
+                data = {SIZE{8'h00}};
                 if (finished)
                     nextState = S_NOOP_RESET;
             end
+
+            default: nextState = S_SCAN_LIMIT;
         endcase
     end
 
-    assign finish = (state == S_NOOP_DISPLAY);
+    assign started = (state == S_DISPLAY_DIGIT7 |
+                      state == S_DISPLAY_DIGIT6 | 
+                      state == S_DISPLAY_DIGIT5 |
+                      state == S_DISPLAY_DIGIT4 |
+                      state == S_DISPLAY_DIGIT3 |
+                      state == S_DISPLAY_DIGIT2 |
+                      state == S_DISPLAY_DIGIT1 |
+                      state == S_DISPLAY_DIGIT0);
 endmodule
