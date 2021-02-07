@@ -4,36 +4,6 @@ module provider(
     input enable,
     output reg [7:0] col
 );
-    // FPGA-Systems.ru (15 symbols)
-    // (0..9) - 1..9,0
-    // (A..z) - 10..62
-    // (A..Z) - 10..35
-    // (a..z) - 37..62
-    // . - 80
-    // - - 65
-
-    // A B C D E F G H I J K L M
-    // N O P Q R S T U V W X Y Z
-
-    // a b c d e f g h i j k l m
-    // n o p q r s t u v w x y z
-
-    // 15
-    // 25
-    // 16
-    // 10
-    // 65
-    // 28
-    // 61
-    // 55
-    // 56
-    // 41
-    // 49
-    // 55
-    // 80
-    // 54
-    // 57
-
     reg [7:0] address, next_address;
     reg [2:0] row_cnt;
 
@@ -72,25 +42,29 @@ module provider(
             end
         end
 
+    // hello, world!
+    // 8'h68, 8'h65, 8'h6c, 8'h6c, 8'h6f, 8'h2c, 8'h20, 8'h77, 8'h6f, 8'h72, 8'h6c, 8'h64, 8'h21
+    // 8'h48, 8'h45, 8'h4c, 8'h4c, 8'h4f, 8'h2c, 8'h20, 8'h57, 8'h4f, 8'h52, 8'h4c, 8'h44, 8'h21
+
     always @* begin
         next_state = state;
         case(state)
-            S0: begin next_state = S1; next_address = 127; end
-            S1: begin next_state = S2; next_address = 15; end
-            S2: begin next_state = S3; next_address = 25; end
-            S3: begin next_state = S4; next_address = 16; end
-            S4: begin next_state = S5; next_address = 10; end
-            S5: begin next_state = S6; next_address = 65; end
-            S6: begin next_state = S7; next_address = 28; end
-            S7: begin next_state = S8; next_address = 61; end
-            S8: begin next_state = S9; next_address = 55; end
-            S9: begin next_state = S10; next_address = 56; end
-            S10: begin next_state = S11; next_address = 41; end
-            S11: begin next_state = S12; next_address = 49; end
-            S12: begin next_state = S13; next_address = 55; end
-            S13: begin next_state = S14; next_address = 80; end
-            S14: begin next_state = S15; next_address = 54; end
-            S15: begin next_state = S0; next_address = 57; end
+            S0: begin next_state = S1; next_address = 8'h48; end
+            S1: begin next_state = S2; next_address = 8'h45; end
+            S2: begin next_state = S3; next_address = 8'h4c; end
+            S3: begin next_state = S4; next_address = 8'h4c; end
+            S4: begin next_state = S5; next_address = 8'h4f; end
+            S5: begin next_state = S6; next_address = 8'h2c; end
+            S6: begin next_state = S7; next_address = 8'h20; end
+            S7: begin next_state = S8; next_address = 8'h57; end
+            S8: begin next_state = S9; next_address = 8'h4f; end
+            S9: begin next_state = S10; next_address = 8'h52; end
+            S10: begin next_state = S11; next_address = 8'h4c; end
+            S11: begin next_state = S12; next_address = 8'h44; end
+            S12: begin next_state = S13; next_address = 8'h21; end
+            S13: begin next_state = S14; next_address = 8'h20; end
+            S14: begin next_state = S15; next_address = 8'h20; end
+            S15: begin next_state = S0; next_address = 8'h20; end
         endcase
     end
 
